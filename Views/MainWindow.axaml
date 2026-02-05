@@ -1,13 +1,13 @@
-<suki:SukiWindow xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:DTExplorer.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+        xmlns:faui="using:FluentAvalonia.UI.Controls"
+        xmlns:vm="using:DTExplorer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="DTExplorer.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        BackgroundStyle="Flat"
+        x:CompileBindings="True"
         Title="DTExplorer">
 
     <Design.DataContext>
@@ -15,11 +15,25 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
-
-    <suki:SukiWindow.LogoContent>
-        <Image Source="avares://DTExplorer/Assets/dtexplorer-logo.png" Width="20" Height="20"/>
-    </suki:SukiWindow.LogoContent>
-
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
-</suki:SukiWindow>
+  <Grid ShowGridLines="True" RowDefinitions="*,Auto">
+    <StackPanel Grid.Row="0">
+      <faui:TabView Name="DtExplorerTabView" TabWidthMode="Equal" CloseButtonOverlayMode="OnPointerOver"
+                    CanReorderTabs="True" AllowDropTabs="True" CanDragTabs="True"
+                    TabItems="{Binding Documents}" SelectedItem="{Binding SelectedTabBarItem}"
+                    AddTabButtonCommand="{Binding NewDocumentCommand}" AddTabButtonCommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
+        <faui:TabView.DataTemplates>
+          <vm:TabViewLocator/>
+        </faui:TabView.DataTemplates>
+        <faui:TabView.TabItemTemplate>
+          <DataTemplate x:DataType="vm:TabItemViewModel">
+            <faui:TabViewItem Header="{Binding Header}" IsClosable="{Binding IsClosable}" IconSource="{Binding Icon}" Content="{Binding}" />
+          </DataTemplate>
+        </faui:TabView.TabItemTemplate>
+      </faui:TabView>
+    </StackPanel>
+    <!--状态栏-->
+    <Panel Grid.Row="1">
+      <TextBlock Margin="6,4" FontSize="16" TextAlignment="Left" Text="{Binding StatusMessage}" />
+    </Panel>
+  </Grid>
+</Window>
